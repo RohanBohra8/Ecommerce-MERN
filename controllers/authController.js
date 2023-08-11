@@ -1,6 +1,8 @@
 import userModel from "../models/userModel.js"
-import { hashPassword } from "../helpers/authHelper.js";
+import { comparePassword, hashPassword } from "../helpers/authHelper.js";
+import JWT from 'jsonwebtoken';
 
+//RESGISTER || POST
 export const registerController = async(req,res) => {
     try{
         const { name, email, password, phone, address } = req.body;
@@ -36,6 +38,7 @@ export const registerController = async(req,res) => {
             user
         })
     } catch(error) {
+        console.log(error);
         res.status(500).send({
             success:false,
             message:"Error in registeration",
@@ -44,4 +47,59 @@ export const registerController = async(req,res) => {
     }
 }
 
+
+// LOGIN || POST
+export const loginController = async(req,res) => {
+    try{
+        const {email, password} = req.body;
+        //validation
+        if(!email || !password) {
+            return res.status(404).send({
+                success:false,
+                message:"Invalid Email or Password"
+            })
+        }
+        //check user from database
+        const user = await userModel.findOne({email});
+        //validation for user if it exist
+        if(!user){
+            return res.status(404).send({
+                success:false,
+                message:"Email is not registered"
+            })
+        }
+        //matching if the password is correct or not 
+        const match = await comparePassword(password,user.password);
+        if(!match){
+            return res.status(200).send({
+                success:true,
+                message:"Invalid password"
+            });
+        }
+
+        //token creation using jwt //iske nivha ka halka sa bhi mat chedo
+        const token = await JWT.sign({_id:user._id},process.env.JWT_SECRET, {
+            expiresIn:"7d",
+        }); 
+        
+        res.status(200).send({
+            success:true,
+            message:'login successfully',
+            user:{ //custom create kia hai
+                name:user.name,
+                email:user.email,
+                phone:user.phone,
+                address:user.address,
+            },
+            token  //token bhbi pass krdia
+        })
+    }catch(error) {
+        console.log(error)
+        res.status(500).send({
+            success:false,
+            message:"Error in login",
+            error
+        })
+    }
+}
 

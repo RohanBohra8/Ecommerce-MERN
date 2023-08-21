@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Layout from "../../components/Layout/Layout";
 import toast from 'react-hot-toast';
 import axios from "axios";
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import '../../styles/AuthStyles.css';
 import { useAuth } from "../../context/auth";
 
@@ -13,6 +13,8 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [auth,setAuth] = useAuth();
 
+
+  const location = useLocation();
   //navigation from react-router-dom
   const navigate = useNavigate();
 
@@ -27,14 +29,14 @@ const Login = () => {
         { email, password }
       );
       if(response && response.data.success){
-        toast.success(response.data.message)
+        toast.success(response.data && response.data.message)
         setAuth({
           ...auth,
           user:response.data.user,
           token:response.data.token,
         })
         localStorage.setItem('auth',JSON.stringify(response.data)); //sara data local storage me add ho jayga 
-        navigate('/');
+        navigate(location.state || '/');
       }
       else{
         toast.error(response.data.message)

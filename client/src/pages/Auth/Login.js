@@ -4,14 +4,19 @@ import toast from 'react-hot-toast';
 import axios from "axios";
 import { useNavigate } from 'react-router-dom';
 import '../../styles/AuthStyles.css';
+import { useAuth } from "../../context/auth";
+
 
 const Login = () => {
     //states
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [auth,setAuth] = useAuth();
 
   //navigation from react-router-dom
   const navigate = useNavigate();
+
+
 
   //form function
   const handleSubmit = async (e) => {
@@ -22,9 +27,13 @@ const Login = () => {
         { email, password }
       );
       if(response && response.data.success){
-        toast.success(response.data.message,{
-            duration: 2000
+        toast.success(response.data.message)
+        setAuth({
+          ...auth,
+          user:response.data.user,
+          token:response.data.token,
         })
+        localStorage.setItem('auth',JSON.stringify(response.data)); //sara data local storage me add ho jayga 
         navigate('/');
       }
       else{

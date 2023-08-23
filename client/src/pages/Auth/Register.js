@@ -12,6 +12,7 @@ const Register = () => {
   const [password, setPassword] = useState("");
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
+  const [answer, setAnswer] = useState("");
 
   //navigation from react-router-dom
   const navigate = useNavigate();
@@ -22,7 +23,7 @@ const Register = () => {
     try {
       const response = await axios.post(
         `/api/v1/auth/register`,
-        { name, email, password, phone, address }
+        { name, email, password, phone, address, answer }
       );
       if(response && response.data.success){
         toast.success(response.data.message,{
@@ -97,6 +98,17 @@ const Register = () => {
               className="form-control"
               id="exampleInputAddress"
               placeholder="Address"
+              required
+            />
+          </div>
+          <div className="mb-3">
+            <input
+              type="text"
+              value={answer}
+              onChange={(e) => setAnswer(e.target.value)}
+              className="form-control"
+              id="exampleInputAnswer"
+              placeholder="what is your favourite Movie ?"
               required
             />
           </div>

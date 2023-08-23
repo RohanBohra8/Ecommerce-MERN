@@ -2,17 +2,15 @@ import React, { useState } from "react";
 import Layout from "../../components/Layout/Layout";
 import toast from "react-hot-toast";
 import axios from "axios";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import "../../styles/AuthStyles.css";
-import { useAuth } from "../../context/auth";
 
-const Login = () => {
+const ForgotPassword = () => {
   //states
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [auth, setAuth] = useAuth();
+  const [newPassword, setNewPassword] = useState("");
+  const [answer, setAnswer] = useState("");
 
-  const location = useLocation();
   //navigation from react-router-dom
   const navigate = useNavigate();
 
@@ -20,19 +18,14 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(`/api/v1/auth/login`, {
+      const response = await axios.post(`/api/v1/auth/forgot-password`, {
         email,
-        password,
+        newPassword,
+        answer,
       });
       if (response && response.data.success) {
         toast.success(response.data && response.data.message);
-        setAuth({
-          ...auth,
-          user: response.data.user,
-          token: response.data.token,
-        });
-        localStorage.setItem("auth", JSON.stringify(response.data)); //sara data local storage me add ho jayga
-        navigate(location.state || "/");
+        navigate("/login");
       } else {
         toast.error(response.data.message);
       }
@@ -43,9 +36,9 @@ const Login = () => {
   };
 
   return (
-    <Layout title="Login- Ecommerce App">
+    <Layout title={"Forgot Password - Ecommerce App"}>
       <div className="form-container">
-        <h1>Login Page</h1>
+        <h4 className="title">RESET PASSWORD</h4>
 
         <form on onSubmit={handleSubmit}>
           <div className="mb-3">
@@ -55,36 +48,35 @@ const Login = () => {
               onChange={(e) => setEmail(e.target.value)}
               className="form-control"
               id="exampleInputEmail"
-              placeholder="email"
+              placeholder="Enter your email"
+              required
+            />
+          </div>
+          <div className="mb-3">
+            <input
+              type="text"
+              value={answer}
+              onChange={(e) => setAnswer(e.target.value)}
+              className="form-control"
+              id="exampleInputanswer"
+              placeholder="Enter your favourite movie"
               required
             />
           </div>
           <div className="mb-3">
             <input
               type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
               className="form-control"
-              id="exampleInputPassword"
-              placeholder="Password"
+              id="exampleInputNewPassword"
+              placeholder="Enter your Password"
               required
             />
           </div>
 
-          <div className="mb-3">
-            <button
-              type="button"
-              className="btn btn-primary"
-              onClick={() => {
-                navigate("/forgot-password");
-              }}
-            >
-              Forgot password
-            </button>
-          </div>
-
           <button type="submit" className="btn btn-primary">
-            Login
+            Reset
           </button>
         </form>
       </div>
@@ -92,4 +84,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default ForgotPassword;

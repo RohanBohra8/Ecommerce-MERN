@@ -20,10 +20,16 @@ router.post('/forgot-password', forgotPasswordController);
 //TEST
 router.get('/test', requiredSignIn, isAdmin, testController);
 
-//PROTECTED ROUTE FOR AUTH
+//PROTECTED ROUTE FOR USER AUTH
 router.get('/user-auth', requiredSignIn , (req,res) => {
     res.status(200).send({ ok:true });
 })
+
+//PROTECTED ROUTE FOR ADMIN AUTH
+router.get('/admin-auth', requiredSignIn, isAdmin, (req,res) => {
+    res.status(200).send({ ok:true });
+})
+
 
 
 export default router;

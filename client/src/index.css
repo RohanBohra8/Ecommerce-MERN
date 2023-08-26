@@ -92,3 +92,10 @@ font-family: 'Roboto', sans-serif;
   align-items: center;
   justify-content: center;
 }
+
+/*=================product link=============*/
+.product-link {
+  text-decoration: none !important;
+  color: black !important;
+}
+
